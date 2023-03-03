@@ -23,7 +23,6 @@ func NewAWSClient(profile string) (*AWSClient, error) {
 		Profile:           profile,
 		SharedConfigState: session.SharedConfigEnable,
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +97,11 @@ func (a *AWSClient) GetECSServices(cluster string) ([]string, error) {
 		}
 
 		for _, arn := range result.ServiceArns {
-			service := strings.Split((*arn), fmt.Sprintf("/%v/", cluster))[1]
+			split := strings.Split((*arn), fmt.Sprintf("/%v/", cluster))
+			service := split[0]
+			if len(split) > 1 {
+				service = split[1]
+			}
 			services = append(services, service)
 		}
 
